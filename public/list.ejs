@@ -1,0 +1,125 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+<title>Cloudant FS</title>
+<script type="text/javascript" src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css"/>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<link href="./colorbox.css" rel="stylesheet"/> 
+<script type="text/javascript" src="./jquery.colorbox-min.js"></script>
+<script type="text/javascript" src="./cvi_busy_lib.js"></script>
+<script>
+$(function(){
+  $('.iframe').colorbox( { iframe: true, width:"80%", height:"80%" } );
+});
+
+function downloadFile( path ){
+  window.location.href = './download?id=' + path;
+}
+
+function delFile( path ){
+  if( window.confirm( 'Path: ' + path + ' のファイルを削除します' ) ){
+    var obj = getBusyOverlay( 'viewport', { color:'black', opacity:0.5, text:'削除中', style:'text-decoration:blink;font-weight:bold;font-size:12px;color:white' } );
+
+    $.ajax({
+      type: "DELETE",
+      url: "./del",
+      data: "id=" + path,
+      success: function( data ){
+        obj.remove();
+        console.log( data );
+        var json = JSON.parse( data );
+
+        var file_id = json.file_id;
+        if( file_id.indexOf( "error-" ) != 0 ){
+          $('#'+file_id).remove();
+        }
+      },
+      error: function( jqXHR, textStatus, errorThrown ){
+        obj.remove();
+        console.log( textStatus + " : " + errorThrown );
+      }
+    });
+  }
+}
+</script>
+</head>
+<body>
+  <!-- //navi -->
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="./admin">ファイル</a>
+      <button class="navbar-toggle" data-toggle="collapse" data-target=".target">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="collapse navbar-collapse target">
+      <ul class="nav navbar-nav navbar-right">   
+      	<li>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <!-- navi// -->
+
+  <!-- //list -->
+  <div class="container" style="padding:60px 0;">
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr style="background-color: #ffffcc;"><th>Path</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+<% if( dir.length > 0 ){
+     var p = '';
+     var n = dir.lastIndexOf( '/', dir.length - 2 );
+     if( n > -1 ){
+       p = dir.substring( 0, n );
+     }
+ %>
+<tr id="<%= ids[i] %>">
+ <td>
+  <a href="./?dir=<%= p %>" title="change directory">..</a>
+ </td>
+ <td>&nbsp;</td>
+</tr>
+<% } %>
+<% for( var i = 0; i < ids.length; i ++ ){ %>
+<tr id="<%= ids[i] %>">
+<% var c = ids[i].substring( ids[i].length - 1, ids[i].length );
+   if( c == '/' ){ %>
+ <td>
+  <a href="./?dir=<%= ids[i] %>" title="change directory"><%= ids[i] %></a>
+ </td>
+ <td>&nbsp;</td>
+<% }else{ %>
+ <td>
+  <a class="iframe" rel="external" href="./get?id=<%= ids[i] %>" title="preview"><%= ids[i] %></a>
+ </td>
+ <td>
+  <button type="button" id="delfilebutton_<%= ids[i] %>" class="btn btn-danger" onClick="delFile('<%= ids[i] %>');" title="delete"><i class="glyphicon glyphicon-trash"></i></button>
+  <button type="button" id="downloadbutton_<%= ids[i] %>" class="btn btn-primary" onClick="downloadFile('<%= ids[i] %>');" title="download"><i class="glyphicon glyphicon-download-alt"></i></button>
+ </td>
+<% } %>
+</tr>
+<% } %>
+      </tbody>
+    </table>
+  </div>
+  <!-- list// -->
+
+  <!-- //add -->
+  <div class="container" style="padding:20px 0;">
+    <form method="POST" action="add" enctype="multipart/form-data">
+      <input type="hidden" name="dir" value="<%= dir %>"/>
+      Path: <input type="text" name="path" value=""/><br/>
+      File: <input type="file" name="file" value=""/><br/>
+      <input type="submit" value="Add"/>
+    </form>
+  </div>
+  <!-- add// -->
+</body>
+</html>
+
