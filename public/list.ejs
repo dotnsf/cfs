@@ -96,7 +96,7 @@ function delFile( path ){
  <td>&nbsp;</td>
 <% }else{ %>
  <td>
-  <a class="iframe" rel="external" href="./get?id=<%= ids[i] %>" title="preview"><%= ids[i] %></a>
+  <a class="iframe" rel="external" href="./get?id=<%= dir %><%= ids[i] %>" title="preview"><%= ids[i] %></a>
  </td>
  <td>
   <button type="button" id="delfilebutton_<%= ids[i] %>" class="btn btn-danger" onClick="delFile('<%= ids[i] %>');" title="delete"><i class="glyphicon glyphicon-trash"></i></button>
