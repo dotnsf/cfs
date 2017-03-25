@@ -154,6 +154,7 @@ app.delete( '/del', function( req, res ){
   var path = req.body.id;
 
   //. Cloudant から削除
+  var fsdb = cloudant.db.use( settings.cloudant_db );
   fsdb.get( path, null, function( err1, body1, header1 ){
     if( err1 ){
       err1.file_id = "error-1";

@@ -49,7 +49,7 @@ function delFile( path ){
   <!-- //navi -->
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="navbar-header">
-      <a class="navbar-brand" href="./admin">ファイル</a>
+      <a class="navbar-brand" href="./admin">Cloudant File Storage</a>
       <button class="navbar-toggle" data-toggle="collapse" data-target=".target">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -76,10 +76,10 @@ function delFile( path ){
      var p = '';
      var n = dir.lastIndexOf( '/', dir.length - 2 );
      if( n > -1 ){
-       p = dir.substring( 0, n );
+       p = dir.substring( 0, n + 1 );
      }
  %>
-<tr id="<%= ids[i] %>">
+<tr id="<%= dir %>">
  <td>
   <a href="./?dir=<%= p %>" title="change directory">..</a>
  </td>
@@ -87,11 +87,11 @@ function delFile( path ){
 </tr>
 <% } %>
 <% for( var i = 0; i < ids.length; i ++ ){ %>
-<tr id="<%= ids[i] %>">
+<tr id="<%= dir %><%= ids[i] %>">
 <% var c = ids[i].substring( ids[i].length - 1, ids[i].length );
    if( c == '/' ){ %>
  <td>
-  <a href="./?dir=<%= ids[i] %>" title="change directory"><%= ids[i] %></a>
+  <a href="./?dir=<%= dir %><%= ids[i] %>" title="change directory"><%= ids[i] %></a>
  </td>
  <td>&nbsp;</td>
 <% }else{ %>
@@ -99,8 +99,8 @@ function delFile( path ){
   <a class="iframe" rel="external" href="./get?id=<%= dir %><%= ids[i] %>" title="preview"><%= ids[i] %></a>
  </td>
  <td>
-  <button type="button" id="delfilebutton_<%= ids[i] %>" class="btn btn-danger" onClick="delFile('<%= ids[i] %>');" title="delete"><i class="glyphicon glyphicon-trash"></i></button>
-  <button type="button" id="downloadbutton_<%= ids[i] %>" class="btn btn-primary" onClick="downloadFile('<%= ids[i] %>');" title="download"><i class="glyphicon glyphicon-download-alt"></i></button>
+  <button type="button" id="delfilebutton_<%= ids[i] %>" class="btn btn-danger" onClick="delFile('<%= dir %><%= ids[i] %>');" title="delete"><i class="glyphicon glyphicon-trash"></i></button>
+  <button type="button" id="downloadbutton_<%= ids[i] %>" class="btn btn-primary" onClick="downloadFile('<%= dir %><%= ids[i] %>');" title="download"><i class="glyphicon glyphicon-download-alt"></i></button>
  </td>
 <% } %>
 </tr>
